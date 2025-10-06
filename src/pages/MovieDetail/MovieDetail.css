@@ -1,0 +1,89 @@
+.movie-detail {
+  background-color: #000;
+  min-height: 100vh;
+}
+
+.detail-hero {
+  min-height: 100vh;
+  padding: 100px 6%;
+  display: flex;
+  align-items: center;
+}
+
+.detail-content {
+  max-width: 700px;
+}
+
+.detail-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.detail-content h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.detail-meta {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  color: #ddd;
+  font-size: 1.1rem;
+}
+
+.detail-overview {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #ddd;
+}
+
+.detail-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.detail-buttons .btn {
+  padding: 12px 30px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  color: #000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.detail-buttons .btn:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.detail-buttons .dark-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.detail-buttons .dark-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.detail-buttons img {
+  width: 20px;
+}
+
+.detail-info {
+  color: #bbb;
+  line-height: 2;
+}
+
+.detail-info strong {
+  color: #fff;
+  margin-right: 10px;
+}
