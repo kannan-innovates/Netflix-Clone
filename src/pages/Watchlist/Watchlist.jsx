@@ -1,13 +1,24 @@
 import React from 'react';
 import { useWatchlist } from '../../context/WatchlistContext';
-import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
+import { toast } from 'react-toastify';
 import './Watchlist.css';
 
 function Watchlist() {
-  const { watchlist, removeFromWatchlist } = useWatchlist();
+  const { watchlist, removeFromWatchlist, loading } = useWatchlist();
+
+  if (loading) {
+    return (
+      <div className='watchlist-page'>
+        <Navbar />
+        <div className="watchlist-content">
+          <p style={{ textAlign: 'center', padding: '100px' }}>Loading watchlist...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='watchlist-page'>
@@ -24,8 +35,8 @@ function Watchlist() {
         ) : (
           <div className="watchlist-grid">
             {watchlist.map((movie) => (
-              <div key={movie.id} className="watchlist-item">
-                <Link to={`/movie/${movie.id}`}>
+              <div key={movie.docId} className="watchlist-item">
+                <Link to={`/movie/${movie.movieId}`}>
                   <img 
                     src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`} 
                     alt={movie.title} 
@@ -37,13 +48,13 @@ function Watchlist() {
                 </Link>
                 <button 
                   className="remove-btn" 
-                    onClick={() => {
-                      removeFromWatchlist(movie.id);
-                        toast.success('Removed from watchlist');
-  }}
->
-  ✕ Remove
-</button>
+                  onClick={() => {
+                    removeFromWatchlist(movie.movieId);
+                    toast.success('Removed from watchlist');
+                  }}
+                >
+                  ✕ Remove
+                </button>
               </div>
             ))}
           </div>

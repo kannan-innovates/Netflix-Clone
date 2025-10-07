@@ -1,48 +1,62 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { addToWatchlistDB, getWatchlistDB, removeFromWatchlistDB } from '../firebase';
 
 const WatchlistContext = createContext();
 
 export function WatchlistProvider({ children }) {
   const [watchlist, setWatchlist] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
+  // Load watchlist from Firebase when user logs in
   useEffect(() => {
-    if (user) {
-      const saved = localStorage.getItem(`watchlist_${user.uid}`);
-      if (saved) {
-        setWatchlist(JSON.parse(saved));
+    const loadWatchlist = async () => {
+      if (user) {
+        setLoading(true);
+        const data = await getWatchlistDB(user.uid);
+        setWatchlist(data);
+        setLoading(false);
+      } else {
+        setWatchlist([]);
+        setLoading(false);
       }
-    } else {
-      setWatchlist([]);
-    }
+    };
+
+    loadWatchlist();
   }, [user]);
 
-  
-  useEffect(() => {
-    if (user && watchlist.length >= 0) {
-      localStorage.setItem(`watchlist_${user.uid}`, JSON.stringify(watchlist));
-    }
-  }, [watchlist, user]);
+  const addToWatchlist = async (movie) => {
+    // Check if already exists
+    const exists = watchlist.find(m => m.movieId === movie.id);
+    if (exists) return;
 
-  const addToWatchlist = (movie) => {
-    setWatchlist((prev) => {
-      const exists = prev.find(m => m.id === movie.id);
-      if (exists) return prev;
-      return [...prev, movie];
-    });
+    // Add to Firebase
+    await addToWatchlistDB(user.uid, movie);
+    
+    // Reload watchlist
+    const updated = await getWatchlistDB(user.uid);
+    setWatchlist(updated);
   };
 
-  const removeFromWatchlist = (movieId) => {
-    setWatchlist((prev) => prev.filter(m => m.id !== movieId));
+  const removeFromWatchlist = async (movieId) => {
+    // Find the document to delete
+    const movieDoc = watchlist.find(m => m.movieId === movieId);
+    if (!movieDoc) return;
+
+    // Delete from Firebase
+    await removeFromWatchlistDB(movieDoc.docId);
+    
+    // Remove from local state
+    setWatchlist((prev) => prev.filter(m => m.movieId !== movieId));
   };
 
   const isInWatchlist = (movieId) => {
-    return watchlist.some(m => m.id === movieId);
+    return watchlist.some(m => m.movieId === movieId);
   };
 
   return (
-    <WatchlistContext.Provider value={{ watchlist, addToWatchlist, removeFromWatchlist, isInWatchlist }}>
+    <WatchlistContext.Provider value={{ watchlist, addToWatchlist, removeFromWatchlist, isInWatchlist, loading }}>
       {children}
     </WatchlistContext.Provider>
   );
